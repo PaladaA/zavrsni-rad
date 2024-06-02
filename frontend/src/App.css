@@ -7,40 +7,76 @@ body {
   font-family: system-ui;
 }
 
+button {
+  cursor: pointer;
+}
+
 header {
-  padding: 20px;
+  padding: 20px 15px 5px;
   background: black;
   color: white;
+  height: 65px;
 }
 
 header nav {
   display: grid;
-  grid-template-rows: 45px 30px;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: repeat(5, minmax(0, max-content)) 1fr;
+  gap: 0px 40px;
   width: 100%;
-  /* background: black; */
+  align-items: end;
+  justify-content: start;
+}
+
+header nav div {
+  display: flex;
+  gap: 0px 20px;
+  justify-content: flex-end;
+  align-items: baseline;
+  flex-direction: row;
 }
 
 header nav li {
   cursor: pointer;
   list-style: none;
-  grid-row-start: 2;
+  width: max-content;
+  height: max-content;
+  border-radius: 6px;
 }
 
 header nav li a {
   text-decoration: none;
   color: inherit;
   list-style-type: none;
+  padding: 5px 5px;
+  display: block;
 }
 
-header nav li:nth-child(1) {
-  grid-column-start: 3;
-  grid-row-start: 1;
+header nav div li a {
+  font-size: 20px;
+}
+
+header nav > li:nth-child(1) {
+  grid-column-start: 1;
+  color: white;
+  font-size: 25px;
+}
+
+header nav > li:nth-child(1) a {
+  display: block;
+  height: 36px;
 }
 
 header nav li:nth-child(2) {
-  grid-column-start: 4;
-  grid-row-start: 1;
+  grid-column-start: 2;
+}
+
+.nav-button:hover {
+  color: #ff5722;
+}
+
+.nav-button.active {
+  box-shadow: 0px 0px 6px #ff5722;
+  color: #ff5722;
 }
 
 #body {
@@ -64,6 +100,10 @@ header nav li:nth-child(2) {
   margin: 0;
 }
 
+#leftBar .league-from-bar-holder {
+  position: relative;
+}
+
 #leftBar .league-from-bar {
   display: flex;
   position: relative;
@@ -78,10 +118,13 @@ header nav li:nth-child(2) {
   cursor: pointer;
 }
 
-#leftBar .league-from-bar button{
+.favorite-button {
   position: absolute;
-  right: 9px;
-  top: 9px;
+  right: 2px;
+  top: 8px;
+  background: inherit;
+  border: 0;
+  font-size: 17px;
 }
 
 #leftBar #search-bar {
@@ -181,7 +224,7 @@ header nav li:nth-child(2) {
 }
 
 #leftBar .expand-league-button {
-  background: black;
+  background: black !important;
 }
 #leftBar .expand-league-button div {
   background: white;
@@ -194,7 +237,7 @@ header nav li:nth-child(2) {
 
 #display {
   display: flex;
-  height: calc(100vh - 115px);
+  height: calc(100vh - 65px);
   flex-direction: row;
   background: gainsboro;
 }
@@ -415,6 +458,12 @@ header nav li:nth-child(2) {
   font-weight: bold;
 }
 
+#form-holder #exit + button {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+}
+
 #form-holder #exit {
   cursor: pointer;
   position: absolute;
@@ -446,4 +495,138 @@ header nav li:nth-child(2) {
   padding: 3px 5px;
   cursor: pointer;
   font-size: 14px;
+}
+
+#home {
+  height: calc(100vh - 65px);
+  padding: 30px;
+}
+
+#home-header {
+  position: relative;
+  padding: 30px 0;
+  border-bottom: solid 1px black;
+}
+
+#home h3 {
+  margin: 0;
+}
+
+#settings {
+  position: absolute;
+  right: 0;
+  top: 25px;
+}
+
+#home #settings-button {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  padding: 7px;
+  justify-content: space-between;
+}
+
+#settings #settings-button p {
+  margin: 0;
+}
+
+#settings-button .svg {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  font-size: 21px;
+}
+
+#settings-button .svg.active {
+  top: -2px;
+  transform: rotate(180deg);
+}
+
+.settings-panel {
+  position: relative;
+  z-index: 2;
+  visibility: hidden;
+  height: 0px;
+  background: grey;
+  overflow: hidden;
+}
+
+.settings-panel.active {
+  visibility: visible;
+  height: inherit;
+  background: gainsboro;
+}
+
+.settings-panel > button {
+  width: 100%;
+  height: 40px;
+}
+
+.setting {
+  width: 100%;
+  height: 0px;
+}
+
+.setting.active {
+  visibility: visible;
+  height: 30px;
+}
+
+.settings-panel form {
+  display: flex;
+}
+
+.settings-panel form input {
+  width: 70%;
+}
+
+.settings-panel form input + button{
+  width: 30%;
+}
+
+.settings-panel div button {
+  width: 100%;
+  height: 100%;
+}
+
+#admins-form {
+  flex-direction: column;
+}
+
+#admins-form input {
+  width: 100%;
+}
+
+#admins-form .user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: solid 1px black;
+  margin-top: 15px;
+  padding: 2px 5px;
+}
+
+#admins-form .user button {
+  width: 33px;
+  height: 22px;
+  margin: 0 3px;
+  background: inherit;
+  border: 0;
+  font-size: 22px;
+}
+
+#home #settings-button p{
+  margin: 0;
+}
+
+#home .favorites-from-sports #settings-button {
+margin: 30px 0px 0px;
+}
+
+.favorite-matches, .favorite-leagues{
+  min-height: 40px;
+  background: lightgray;
+  border-bottom: solid 1px black;
 }

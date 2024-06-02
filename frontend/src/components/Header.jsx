@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useContextComp } from "./MyContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import UniversalCookie from "universal-cookie";
-const cookies = new UniversalCookie();
+import { FaHome } from "react-icons/fa";
+
 
 const Header = () => {
   const {
@@ -11,21 +12,46 @@ const Header = () => {
     user,
     setUser,
   } = useContextComp();
+  const { sport } = useParams();
+const cookies = new UniversalCookie();
+
+  console.log(sport)
 
   return (
     <header>
       <nav>
         {
-          <li
-            onClick={() => { 
+          <li className={`nav-button ${sport == undefined ? "active" : ""}`}
+            onClick={() => {
               !user.name && setLoginFormState(true);
             }}
           >
-            <Link to="/">Home</Link>
+            <Link to="/"><FaHome /></Link>
           </li>
         }
+        {
+          <li className={`nav-button ${sport == 'football' ? "active" : ""}`}>
+            <Link to="football">Football</Link>
+          </li>
+        }
+        {
+          <li className={`nav-button ${sport == 'basketball' ? "active" : ""}`}>
+            <Link to="basketball">Basketball</Link>
+          </li>
+        }
+        {
+          <li className={`nav-button ${sport == 'handball' ? "active" : ""}`}>
+            <Link to="handball">Handball</Link>
+          </li>
+        }
+        {
+          <li className={`nav-button ${sport == 'volleyball' ? "active" : ""}`}>
+            <Link to="volleyball">Volleyball</Link>
+          </li>
+        }
+        <div>
         {!user.name ? (
-          <li>
+          <li className='nav-button'>
             <a
               onClick={(e) => {
                 e.preventDefault(),
@@ -37,18 +63,18 @@ const Header = () => {
             </a>
           </li>
         ) : (
-          <li
+          <li className='nav-button'
             onClick={() => {
-              cookies.remove("token", {domain:  'localhost', path:'/'}); 
+              cookies.remove("token"), setUser({ name: "", id: "", email: "" });
             }}
           >
-            <a href="">Log out</a>
+           <a href="">Log out</a> 
           </li>
         )}
         {!user.name && (
-          <li>
+          <li className='nav-button'>
             <a
-              onClick={(e) => { 
+              onClick={(e) => {
                 e.preventDefault(),
                   setRegisterFormState(true),
                   setLoginFormState(false);
@@ -62,27 +88,7 @@ const Header = () => {
           <li>
             <a>Log Out</a>
           </li>
-        )}
-        {
-          <li>
-            <Link to="football">Football</Link>
-          </li>
-        }
-        {
-          <li>
-            <Link to="basketball">Basketball</Link>
-          </li>
-        }
-        {
-          <li>
-            <Link to="handball">Handball</Link>
-          </li>
-        }
-        {
-          <li>
-            <Link to="volleyball">Volleyball</Link>
-          </li>
-        }
+        )}</div>
       </nav>
     </header>
   );

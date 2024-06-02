@@ -3,6 +3,7 @@ const pathsInObj = {
     leagues: "v3leagues", //v3/leagues
     standings: "standings",  //v3/standings?season=2020&league=39
     liveScore: "livescore",  //v3/fixtures?live=all
+    favMatch: "favMatch",    //v3/fixtures?id=1141822
     url: import.meta.env.VITE_REACT_APP_FOOTBALL_URL, //pathInObject.football.url
   },
   basketball: {

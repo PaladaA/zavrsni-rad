@@ -3,86 +3,102 @@ import { useLocation, useParams } from "react-router-dom";
 import maximizeNum from "../functions/maximizeNum";
 import pathsInObj from "../functions/pathsInObj";
 import getDate from "../functions/getDate";
+import joinFirstAndCapital from "../functions/joinFirstAndCapital";
 const Standings = () => {
-  const { id } = useParams();   
+  // const location = useLocation();
+  const { id } = useParams();
   const [clubsStandings, setClubsStandings] = useState({});
   const [date, setDate] = useState(getDate());
   const { sport } = useParams();
 
-  const dataMapper = (data) => {
+  const fun = (data) => {
     if (sport == "football") {
-      return (
-        data.map((element) => ({
-          rank: element.rank,
-          logo: element.team.logo,
-          teamName: element.team.name,
-          stats: {
-            P: element.all.played,//
-            W: element.all.win,//win
-            D: element.all.draw,//draw
-            L: element.all.lose,//lose
-            GF: element.all.goals.for,//goalsFor
-            GA: element.all.goals.against,//goalsAgainst
-            PTS: element.points,//
-          },
-        }))
-      );
+      return data.map((element) => ({
+        rank: element.rank,
+        logo: element.team.logo,
+        teamName: element.team.name,
+        stats: {
+          played: element.all.played,
+          win: element.all.win,
+          draw: element.all.draw,
+          lose: element.all.lose,
+          goalsFr: element.all.goals.for,
+          goalsAgainst: element.all.goals.against,
+          PTS: element.points,
+        },
+      }));
     }
     if (sport == "basketball") {
-      return (
-        data.map((element) => ({
-          rank: element.position,
-          logo: element.team.logo,
-          teamName: element.team.name,
-          stats: {
-            P: element.games.played,//played
-            W: element.games.win.total,//win
-            L: element.games.lose.total,//lose
-            PF: element.points.for,//pointsFor
-            PA: element.points.against,//pointsAgainst
-          },
-        }))
-      );
+      return data.map((element) => ({
+        rank: element.position,
+        logo: element.team.logo,
+        teamName: element.team.name,
+        stats: {
+          played: element.games.played,
+          win: element.games.win.total,
+          lose: element.games.lose.total,
+          pointsFor: element.points.for,
+          pointsAgainst: element.points.against,
+        },
+      }));
     }
     if (sport == "handball") {
-      return (
-        data.map((element) => ({
-          rank: element.position,
-          logo: element.team.logo,
-          teamName: element.team.name,
-          stats: {
-            P: element.games.played,//played
-            W: element.games.win.total,//win
-            D: element.games.draw.total,//draw
-            L: element.games.lose.total,//lose
-            GF: element.goals.for,//goalsFor
-            GA: element.goals.against,//goalsAgainst
-            PTS: element.points,//points
-          },
-        }))
-      );
+      return data.map((element) => ({
+        rank: element.position,
+        logo: element.team.logo,
+        teamName: element.team.name,
+        stats: {
+          played: element.games.played,
+          win: element.games.win.total,
+          draw: element.games.draw.total,
+          lose: element.games.lose.total,
+          goalsFor: element.goals.for,
+          goalsAgainst: element.goals.against,
+          points: element.points,
+        },
+      }));
+    }
+    if (sport == "volleyball") {
+      return data.map((element) => ({
+        rank: element.position,
+        logo: element.team.logo,
+        teamName: element.team.name,
+        stats: {
+          played: element.games.played,
+          win: element.games.win.total,
+          lose: element.games.lose.total,
+          goalsFor: element.goals.for,
+          goalsAgainst: element.goals.against,
+          points: element.points,
+        },
+      }));
     }
   };
-
-  console.log(clubsStandings)
-
+console.log('date',date)
   useEffect(() => {
     console.log(pathsInObj[sport].url);
+    // fetch(`https://api-football-v1.p.rapidapi.com/v3/standings?season=2023&league=${id}`, {data.response[0].league.standings
     fetch(`http://${pathsInObj[sport].url}/${pathsInObj[sport].standings}`, {
       method: "GET",
+      // headers: {
+      //   "X-RapidAPI-Key": `${import.meta.env.VITE_REACT_APP_API_KEY}`,
+      //   "X-RapidAPI-Host": `${pathsInObj[sport].url}`,
+      // },
     })
       .then((response) => response.json())
       .then((data) => {
-        setClubsStandings(dataMapper(data)); 
+        // if (data.response?.length > 0)
+        // setClubsStandings(fun(data.response[0].league?.standings[0] || data.response[0])); //sređuje podatke i sprema u state clubs
+        setClubsStandings(fun(data)); // else setClubsStandings("No Current Leagues");
       })
       .catch((err) => console.error(err));
   }, [id]);
-
-
+  
+  console.log(clubsStandings);
   if (clubsStandings == "No Current Leagues") return <h1>{clubsStandings}</h1>;
   return (
     <div id="standings">
-      <input              /*kalendar */
+      <input
         type="date"
         id="date"
         value={date}
@@ -97,22 +113,22 @@ const Standings = () => {
               <h6></h6>
               <div className="form">
                 {Object.keys(clubsStandings[0].stats).map((element) => {
-                  return <h6 key={element}>{element}</h6>;
+                  return <h6 key={element}>{joinFirstAndCapital(element)}</h6>;
                 })}
               </div>
             </div>
             {clubsStandings.length > 0 &&
-              clubsStandings.map((club, index) => {
+              clubsStandings.map((element, index) => {
                 return (
                   <div key={index}>
                     <div id="rank">
-                      <p>{club.rank}.</p>
+                      <p>{element.rank}.</p>
                     </div>
-                    <img src={club.logo} />
-                    <div>{maximizeNum(club.teamName, 17)}</div>
+                    <img src={element.logo} />
+                    <div>{maximizeNum(element.teamName, 17)}</div>
                     <div className="form">
-                      {Object.values(club.stats).map((points, i) => {
-                        return <p key={i}>{points}</p>;
+                      {Object.values(element.stats).map((element, i) => {
+                        return <p key={i}>{element}</p>;
                       })}
                     </div>
                   </div>
