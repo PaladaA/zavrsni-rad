@@ -1,6 +1,5 @@
 const timeAdjustFun = (date) => {
   const newDate = new Date(date);
-
   return {
     day: newDate.getDate(),
     month: newDate.getMonth() + 1,

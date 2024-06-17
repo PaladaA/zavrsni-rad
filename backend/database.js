@@ -1,4 +1,4 @@
-const mysql = require("mysql"); 
+const mysql = require("mysql");
 
 const db_config = {
   host: process.env.MYSQL_HOST,

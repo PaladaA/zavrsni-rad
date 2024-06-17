@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useContextComp } from "./MyContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import UniversalCookie from "universal-cookie";
-const cookies = new UniversalCookie();
+import { FaHome } from "react-icons/fa";
+import { useWindowSize } from "./useWindowSize";
+import { FaBars } from "react-icons/fa";
+import { IoCloseSharp } from "react-icons/io5";
 
 const Header = () => {
   const {
@@ -10,22 +13,19 @@ const Header = () => {
     setLoginFormState,
     user,
     setUser,
+    openMenu,
+    setOpenMenu,
   } = useContextComp();
+  const { sport } = useParams();
+  const navigate = useNavigate();
+  const cookies = new UniversalCookie();
+  const [width, height] = useWindowSize();
 
-  return (
-    <header>
-      <nav>
-        {
-          <li
-            onClick={() => { 
-              !user.name && setLoginFormState(true);
-            }}
-          >
-            <Link to="/">Home</Link>
-          </li>
-        }
+  const displayElements = () => {
+    return (
+      <div id="auth-buttons">
         {!user.name ? (
-          <li>
+          <li className="nav-button">
             <a
               onClick={(e) => {
                 e.preventDefault(),
@@ -33,56 +33,118 @@ const Header = () => {
                   setLoginFormState(true);
               }}
             >
-              Log in
+              LOG IN
             </a>
           </li>
         ) : (
           <li
+            className="nav-button"
             onClick={() => {
-              cookies.remove("token", {domain:  'localhost', path:'/'}); 
+              cookies.remove("token", { path: "/", maxAge: "604800" });
+              setUser({ name: "", id: "", email: "" });
+              navigate("/sportnews")
             }}
           >
-            <a href="">Log out</a>
+            <a href="">LOG OUT</a>
           </li>
         )}
         {!user.name && (
-          <li>
+          <li className="nav-button">
             <a
-              onClick={(e) => { 
+              onClick={(e) => {
                 e.preventDefault(),
                   setRegisterFormState(true),
                   setLoginFormState(false);
               }}
             >
-              Register
+              REGISTER
             </a>
           </li>
         )}
-        {false && (
-          <li>
-            <a>Log Out</a>
+      </div>
+    );
+  };
+  return (
+    <header>
+      {width <= 650 && (
+        <div id="mobile-header">
+          <div id="sub-header1">
+            <li
+              className={`nav-button ${window.location?.pathname == '/' ? "active" : ""}`}
+              onClick={() => {
+                !user.name && setLoginFormState(true);
+              }}
+            >
+              <Link id="home-link" to="/" onClick={(e) => !user.id && e.preventDefault()}>
+                <FaHome />
+              </Link>
+            </li>
+            <button id="header-bars" onClick={() => setOpenMenu(true)}>
+              <FaBars />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <nav style={{ left: openMenu ? "0px" : "100vw" }}>
+        {width >= 650 && (
+          <li
+            className={`nav-button ${window.location?.pathname == '/' ? "active" : ""}`}
+            onClick={() => {
+              !user.name && setLoginFormState(true);
+            }}
+          >
+            <Link id="home-link" to="/" onClick={(e) => !user.id && e.preventDefault()}>
+              HOME
+            </Link>
           </li>
         )}
+        {width <= 650 && (
+          <button id="header-bars" onClick={() => setOpenMenu(false)}>
+            <IoCloseSharp />
+          </button>
+        )}
         {
-          <li>
-            <Link to="football">Football</Link>
+          <li
+            onClick={() => setOpenMenu(false)}
+            className={`nav-button ${sport == "football" ? "active" : ""}`}
+          >
+            <Link to="football">FOOTBALL</Link>
           </li>
         }
         {
-          <li>
-            <Link to="basketball">Basketball</Link>
+          <li
+            onClick={() => setOpenMenu(false)}
+            className={`nav-button ${sport == "basketball" ? "active" : ""}`}
+          >
+            <Link to="basketball">BASKETBALL</Link>
           </li>
         }
         {
-          <li>
-            <Link to="handball">Handball</Link>
+          <li
+            onClick={() => setOpenMenu(false)}
+            className={`nav-button ${sport == "handball" ? "active" : ""}`}
+          >
+            <Link to="handball">HANDBALL</Link>
           </li>
         }
         {
-          <li>
-            <Link to="volleyball">Volleyball</Link>
+          <li
+            onClick={() => setOpenMenu(false)}
+            className={`nav-button ${sport == "volleyball" ? "active" : ""}`}
+          >
+            <Link to="volleyball">VOLLEYBALL</Link>
           </li>
         }
+        {
+          <li
+            onClick={() => setOpenMenu(false)}
+            className={`nav-button ${window.location?.pathname == "/sportnews" ? "active" : ""}`}
+          >
+            <Link to="sportnews">NEWS</Link>
+          </li>
+        }
+        {displayElements()}
       </nav>
     </header>
   );

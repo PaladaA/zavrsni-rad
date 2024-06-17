@@ -2,125 +2,169 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import maximizeNum from "../functions/maximizeNum";
 import pathsInObj from "../functions/pathsInObj";
-import getDate from "../functions/getDate";
-const Standings = () => {
-  const { id } = useParams();   
-  const [clubsStandings, setClubsStandings] = useState({});
-  const [date, setDate] = useState(getDate());
-  const { sport } = useParams();
+import joinFirstAndCapital from "../functions/joinFirstAndCapital";
+import standingDataMapper from "../dataStructuringFunctions/standingsDataMapper";
+import { useContextComp } from "./MyContext";
+import { fetchStandings } from "../functions/apiFunctions";
 
-  const dataMapper = (data) => {
-    if (sport == "football") {
-      return (
-        data.map((element) => ({
-          rank: element.rank,
-          logo: element.team.logo,
-          teamName: element.team.name,
-          stats: {
-            P: element.all.played,//
-            W: element.all.win,//win
-            D: element.all.draw,//draw
-            L: element.all.lose,//lose
-            GF: element.all.goals.for,//goalsFor
-            GA: element.all.goals.against,//goalsAgainst
-            PTS: element.points,//
-          },
-        }))
-      );
-    }
-    if (sport == "basketball") {
-      return (
-        data.map((element) => ({
-          rank: element.position,
-          logo: element.team.logo,
-          teamName: element.team.name,
-          stats: {
-            P: element.games.played,//played
-            W: element.games.win.total,//win
-            L: element.games.lose.total,//lose
-            PF: element.points.for,//pointsFor
-            PA: element.points.against,//pointsAgainst
-          },
-        }))
-      );
-    }
-    if (sport == "handball") {
-      return (
-        data.map((element) => ({
-          rank: element.position,
-          logo: element.team.logo,
-          teamName: element.team.name,
-          stats: {
-            P: element.games.played,//played
-            W: element.games.win.total,//win
-            D: element.games.draw.total,//draw
-            L: element.games.lose.total,//lose
-            GF: element.goals.for,//goalsFor
-            GA: element.goals.against,//goalsAgainst
-            PTS: element.points,//points
-          },
-        }))
-      );
+const Standings = () => {
+  const { seasonsOfLeague } = useContextComp();
+  const [clubsStandings, setClubsStandings] = useState([]);
+  const [season, setSeason] = useState("");
+  const [seasonList, setSeasonList] = useState([]);
+  const [standingsHeader, setStandingsHeader] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { sport, id } = useParams();
+
+  const fetchFunction = async () => {
+    setLoading(true);
+    try {
+      const standingsData =
+        season && id && (await fetchStandings(sport, id, season));
+      console.log(standingsData);
+      if (standingsData.response?.length > 0) {
+        console.log(standingsData);
+        setClubsStandings(
+          standingDataMapper(
+            standingsData.response[0]?.league?.standings[0] ||
+              standingsData.response[0],
+            sport
+          ),
+          setStandingsHeader(
+            standingsData.response[0]?.league?.name ||
+              standingsData.response[0][0]?.league?.name
+          )
+        );
+      }
+      //sređuje podatke i sprema u state clubs
+      else setClubsStandings([]);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
-  console.log(clubsStandings)
-
   useEffect(() => {
-    console.log(pathsInObj[sport].url);
-    fetch(`http://${pathsInObj[sport].url}/${pathsInObj[sport].standings}`, {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setClubsStandings(dataMapper(data)); 
-      })
-      .catch((err) => console.error(err));
+    if (seasonsOfLeague.length > 0) {
+      const seasonsArray = seasonsOfLeague.map(
+        (seasons) => seasons.season || seasons.year
+      );
+
+      if (
+        seasonsOfLeague[0].hasOwnProperty("season") &&
+        typeof seasonsOfLeague[0].season == "string"
+      ) {
+        seasonsArray.sort((a, b) => {
+          const startYearA = parseInt(a.split("-")[0]);
+          const startYearB = parseInt(b.split("-")[0]);
+
+          return startYearB - startYearA;
+        });
+      } else {
+        seasonsArray.sort((a, b) => b - a);
+      }
+      setSeasonList(seasonsArray);
+      setSeason(seasonsArray[0]);
+    }
   }, [id]);
 
+  useEffect(() => {
+    fetchFunction();
+  }, [id, season]);
 
-  if (clubsStandings == "No Current Leagues") return <h1>{clubsStandings}</h1>;
-  return (
-    <div id="standings">
-      <input              /*kalendar */
-        type="date"
-        id="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-      />
-      <div id="table-holder">
-        {clubsStandings.length > 0 && (
-          <div id="table">
-            <div>
-              <h6>#</h6>
-              <h6>Team</h6>
-              <h6></h6>
-              <div className="form">
-                {Object.keys(clubsStandings[0].stats).map((element) => {
-                  return <h6 key={element}>{element}</h6>;
-                })}
-              </div>
-            </div>
-            {clubsStandings.length > 0 &&
-              clubsStandings.map((club, index) => {
-                return (
-                  <div key={index}>
-                    <div id="rank">
-                      <p>{club.rank}.</p>
-                    </div>
-                    <img src={club.logo} />
-                    <div>{maximizeNum(club.teamName, 17)}</div>
-                    <div className="form">
-                      {Object.values(club.stats).map((points, i) => {
-                        return <p key={i}>{points}</p>;
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        )}
+  if (!clubsStandings.length)
+    return (
+      <div
+        id="standings"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/${pathsInObj[sport].image}")`,
+        }}
+      >
+        <div id="standings-header-holder">
+          {" "}
+          <select
+            id="date"
+            onChange={(e) => setSeason(e.target.value)}
+            value={season.toString()}
+          >
+            {seasonList.map((season) => (
+              <option key={season} value={season}>
+                {season}
+              </option>
+            ))}
+          </select>
+          <h3 id="standings-header">{standingsHeader}</h3>
+        </div>
+        <h1 className="no-data">
+          There is no data for this league this season
+        </h1>
       </div>
+    );
+  return (
+    <div
+      id="standings"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/${pathsInObj[sport].image}")`,
+      }}
+    >
+      {loading ? (
+        <div className="loading-background">
+          <div className="loader"></div>
+        </div>
+      ) : (
+        <>
+          <div id="standings-header-holder">
+            <select
+              id="date"
+              onChange={(e) => setSeason(e.target.value)}
+              defaultValue={season.toString()}
+            >
+              {seasonList.map((seasonElement) => (
+                <option key={seasonElement} value={seasonElement}>
+                  {seasonElement}
+                </option>
+              ))}
+            </select>
+            <h3 id="standings-header">{standingsHeader}</h3>
+          </div>
+          <div id="table-holder">
+            {clubsStandings.length > 0 && (
+              <div id="table">
+                <div>
+                  <h6>#</h6>
+                  <h6>Team</h6>
+                  <h6></h6>
+                  <div className="form">
+                    {Object.keys(clubsStandings[0].stats).map((element) => {
+                      return (
+                        <h6 key={element}>{joinFirstAndCapital(element)}</h6>
+                      );
+                    })}
+                  </div>
+                </div>
+                {clubsStandings.length > 0 &&
+                  clubsStandings.map((element, index) => {
+                    return (
+                      <div key={index}>
+                        <div id="rank">
+                          <p>{element.rank}.</p>
+                        </div>
+                        <img src={element.logo} />
+                        <div>{maximizeNum(element.teamName, 17)}</div>
+                        <div className="form">
+                          {Object.values(element.stats).map((element, i) => {
+                            return <p key={i}>{element}</p>;
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

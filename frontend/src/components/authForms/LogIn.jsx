@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContextComp } from "../MyContext";
+import { IoCloseSharp } from "react-icons/io5";
 
 const LogIn = () => {
   const [inputData, setInputData] = useState({
@@ -14,6 +15,7 @@ const LogIn = () => {
 
   const {
     setRegisterFormState,
+    registerFormState,
     setLoginFormState,
     loginFormState,
     loginFun,
@@ -22,11 +24,9 @@ const LogIn = () => {
 
 
   const inputFun = (e) => {
-    console.log("e.target",e.target)
     const { name, value } = e.target;
-    setInputData(prev => ({...prev, [name]: value }));
+    setInputData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const validationObject = {
     email: {
@@ -46,7 +46,7 @@ const LogIn = () => {
       name: "email",
       id: "email",
       value: inputData.email,
-      onChange: inputFun, 
+      onChange: inputFun,
     },
     password: {
       label: "Password",
@@ -58,54 +58,50 @@ const LogIn = () => {
     },
   };
 
+  console.log(inputData);
 
   const handleSubmit = (e) => {
-    e.preventDefault(); 
-    let tempErrorMessage = false; 
+    e.preventDefault();
+    let tempErrorMessage = false;
     setErrorMessageState({ email: "", password: "" });
 
     Object.entries(inputData).forEach((element) => {
       const key = element[0];
       const value = element[1];
-
       if (!validationObject[key].regex.test(value)) {
         setErrorMessageState((prev) => ({
           ...prev,
           [key]: validationObject[key].errorMessage,
         }));
-        tempErrorMessage = true; 
-      } 
+        tempErrorMessage = true;
+      }
     });
 
-    !tempErrorMessage && loginFun(inputData);
+    !tempErrorMessage && loginFun(inputData, '/login');
   };
-
+  console.log(serverMessage);
   {
     if (loginFormState)
       return (
-        <div id="login"> 
-
+        <div id="login">
           <div id="form-holder">
-            <form onSubmit={handleSubmit}> 
+            <form onSubmit={handleSubmit}>
               <h4>Log In</h4>
               {Object.values(registerObj).map((element) => {
                 return (
                   <div key={element.name}>
-                    <label htmlFor={element.name}>{element.label}</label> 
+                    <label htmlFor={element.name}>{element.label}</label>
                     <input
-                      {...element} 
+                      {...element}
+                      // className={`input ${errors[element.name] ? "active" : ""}`}
                     />
-
                     {errorMessageState[element.name] && (
                       <span>{errorMessageState[element.name]}</span>
                     )}
                   </div>
                 );
-              })}
+              })}{" "}
               <button type="submit">Submit</button>
-
-
-
               <p>{serverMessage}</p>
             </form>
             <button
@@ -114,7 +110,7 @@ const LogIn = () => {
                 setLoginFormState(false);
               }}
             >
-              X
+              <IoCloseSharp />
             </button>
             <div id="redirect">
               <p>Don't have an account?</p>

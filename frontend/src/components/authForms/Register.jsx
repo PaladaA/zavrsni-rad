@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContextComp } from "../MyContext";
+import { IoCloseSharp } from "react-icons/io5";
 
-const Register = () => { 
+const Register = () => {
   const [inputData, setInputData] = useState({
     email: "",
     password: "",
@@ -15,7 +16,6 @@ const Register = () => {
     passwordConfirmation: "",
     name: "",
   });
-
 
   const {
     setRegisterFormState,
@@ -43,7 +43,6 @@ const Register = () => {
       errorMessage: "name can contain 3 - 16 characters",
     },
   };
-
 
   const inputFun = (e) => {
     const { name, value } = e.target;
@@ -99,7 +98,7 @@ const Register = () => {
     Object.entries(inputData).forEach((element) => {
       const key = element[0];
       const value = element[1];
-      if (inputData.passwordConfirmation != inputData.password) { 
+      if (inputData.passwordConfirmation != inputData.password) {
         setErrorMessageState((prev) => ({
           ...prev,
           passwordConfirmation: "passwords aren't corresponding",
@@ -115,9 +114,9 @@ const Register = () => {
       }
     });
 
-    !tempErrorMessage && registerFun(inputData); 
+    !tempErrorMessage && registerFun(inputData);
   };
-  
+
   {
     if (serverMessage == "successfully registered") {
       return (
@@ -131,6 +130,14 @@ const Register = () => {
               }}
             >
               X
+            </button>
+            <button
+              onClick={() => {
+                setRegisterFormState(false);
+                setLoginFormState(true);
+              }}
+            >
+              Log in
             </button>
           </div>
         </div>
@@ -175,7 +182,7 @@ const Register = () => {
                 setRegisterFormState(false);
               }}
             >
-              X
+              <IoCloseSharp />
             </button>
           </div>
         </div>
