@@ -20,6 +20,8 @@ const LogIn = () => {
     loginFormState,
     loginFun,
     serverMessage,
+    user,
+    setUser,
   } = useContextComp();
 
 

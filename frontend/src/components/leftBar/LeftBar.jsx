@@ -66,6 +66,24 @@ const LeftBar = () => {
     }
   };
 
+  const updateAfterPin = (id, country, val) =>{//update array-a kako bi sacuvao promjene koje smo napravili
+    setLeaguesList(prevList => {
+      const updatedList = { ...prevList };
+  
+      // Find the league with the provided id and country
+      Object.keys(updatedList).forEach(continent => {
+        updatedList[continent].forEach(league => {
+          if (league.country === country && league.id === id) {
+            // Update the favoriteLeagues property
+            league.favoriteLeagues = val;
+          }
+        });
+      });
+  
+      return updatedList;
+    });
+    }
+
   return (
     <div
       id="leftBar"
