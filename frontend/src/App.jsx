@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./App.css";
 import {
   Navigate,
@@ -14,6 +15,7 @@ import Protected from "./components/Protected";
 import LiveScore from "./components/matches/LiveScore";
 import Home from "./components/home/Home";
 import SportNews from "./components/SportNews";
+import Settings from "./components/settings/Settings";
 
 function App() {
   function Dashboard() {
@@ -40,6 +42,7 @@ function App() {
               <Route path="league/:id" element={<Standings />} />
             </Route>
             <Route path="sportnews" element={<SportNews />}/>
+            <Route path="settings" element={<Settings />}/>
           </Route>
           <Route path="*" element={<Navigate to="/" />}></Route>
           {/*ukoliko ruta ne postoji vraca na pocetnu*/}

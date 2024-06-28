@@ -15,7 +15,8 @@ export const all = [
   "Match Finished",
   "Match Cancelled",
   "Game Abandoned",
-  "Time to be defined"
+  "Time to be defined",
+  "Game Finished",
 ];
 
 export const pending = [

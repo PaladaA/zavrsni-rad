@@ -10,6 +10,11 @@ export function useContextComp() {
 import React from "react";
 import Register from "./authForms/Register";
 import LogIn from "./authForms/LogIn";
+import {
+  fetchGetTokenForLogIn,
+  fetchLogInUserWithToken,
+  fetchRegisterUser,
+} from "../functions/apiFunctions";
 
 const MyContextComp = ({ children }) => {
   const [loginFormState, setLoginFormState] = useState(false);
@@ -18,8 +23,11 @@ const MyContextComp = ({ children }) => {
   const [user, setUser] = useState("");
   const [seasonsOfLeague, setSeasonsOfLeague] = useState([]);
   const [mobileLeftBarDisplay, setMobileLeftBarDisplay] = useState(false);
-  const [previousPage, setPreviousPage] = useState((window.location?.pathname).split("/"));
+  const [previousPage, setPreviousPage] = useState(
+    (window.location?.pathname).split("/")
+  );
   const [openMenu, setOpenMenu] = useState(false);
+  const [leagueHistory, setLeagueHistory] = useState([]);
 
   const cookies = new UniversalCookie();
 
@@ -28,57 +36,31 @@ const MyContextComp = ({ children }) => {
     getUserData(cookies.get("token"));
   }, [registerFormState, loginFormState]);
 
-  const registerFun = (userInfo) => {
-    fetch(`http://localhost:3000/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }, //important!
-      body: JSON.stringify(userInfo),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setServerMessage(data.message);
-        data.message == "data.message" && setRegisterFormState(false);
-      })
-      .catch((err) => console.error(err));
+  const registerFun = async (userInfo) => {
+    const data = await fetchRegisterUser(userInfo);
+    setServerMessage(data.message);
+    data.message == "data.message" && setRegisterFormState(false);
   };
 
-  const getUserData = (token) => {
-    fetch("http://localhost:3000/login", {
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const { name, email, id, role } = data;
-        setUser({
-          id: id ?? null,
-          name: name ?? null,
-          email: email ?? null,
-          role: role ?? null,
-        });
-        name && setLoginFormState(false);
-        setOpenMenu(false);
-      })
-      .catch((error) => console.error(error));
+  const getUserData = async (token) => {
+    const data = await fetchLogInUserWithToken(token);
+    const { name, email, id, role } = data;
+    setUser({
+      id: id ?? null,
+      name: name ?? null,
+      email: email ?? null,
+      role: role ?? null,
+    });
+    name && setLoginFormState(false);
+    setOpenMenu(false);
   };
 
-  const loginFun = (userInfo, path) => {
-    fetch(`http://localhost:3000${path}`, {
-      // credentials: "omit", // for 3rd party cookie use 'include' u can also try 'same-origin'
-      method: "POST",
-      headers: { "Content-Type": "application/json" }, //important!
-      body: JSON.stringify(userInfo),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setServerMessage(data.message);
-        data.token &&
-          cookies.set("token", data.token, { path: "/", maxAge: "604800" }); //tjedan dana
-        data.token && cookies.get("token") && getUserData(cookies.get("token"));
-      })
-      .catch((err) => console.error(err));
+  const getTokenForLoginFun = async (userInfo, path) => {
+    const data = await fetchGetTokenForLogIn(userInfo, path);
+    setServerMessage(data.message);
+    data.token &&
+      cookies.set("token", data.token, { path: "/", maxAge: "604800" }); //tjedan dana
+    data.token && cookies.get("token") && getUserData(cookies.get("token"));
   };
 
   return (
@@ -88,7 +70,7 @@ const MyContextComp = ({ children }) => {
         registerFormState,
         setLoginFormState,
         loginFormState,
-        loginFun,
+        getTokenForLoginFun,
         registerFun,
         serverMessage,
         user,
@@ -102,6 +84,8 @@ const MyContextComp = ({ children }) => {
         openMenu,
         setOpenMenu,
         setPreviousPage,
+        setLeagueHistory,
+        leagueHistory,
       }}
     >
       {children}

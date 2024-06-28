@@ -26,7 +26,7 @@ const LiveScore = () => {
         setMatchesList(matchDataMapper(matches.response, sport, favMatch));
         setDate(date);
       }
-
+      //slazem podatke u array sa objektima (data.map returna array sa objektima, svaki objekt ima league, leagueId...vidi gori)
       else setMatchesList([]);
     } catch (e) {
       console.log(e);
@@ -126,7 +126,7 @@ const LiveScore = () => {
             {Object.values(matchesList) &&
             Object.values(matchesList).length > 0 ? (
               searchFilter(Object.values(matchesList)).map((matches, index) => {
-              
+                //podatke koje smo slozili kako smo tili nakon fetchanja prikazujemo
                 return (
                   <MatchesByLeagues
                     index={index}

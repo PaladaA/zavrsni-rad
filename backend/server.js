@@ -12,13 +12,21 @@ const favoriteLeaguesRoute = require("./routes/favoriteLeaguesRoute");
 const favoriteMatchesRoute = require("./routes/favoriteMatchesRoute");
 const settingsRoute = require("./routes/settingsRoute");
 
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5173"],
+//     methods: ["OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"],
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: "*",
     methods: ["OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
+
 
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
@@ -26,5 +34,6 @@ app.use("/favorite-leagues", favoriteLeaguesRoute);
 app.use("/favorite-matches", favoriteMatchesRoute);
 app.use("/settings", settingsRoute);
 
-
-app.listen(3000);
+app.listen(3000, () => {
+  console.log(`Server is running at http://localhost:3000`);
+});

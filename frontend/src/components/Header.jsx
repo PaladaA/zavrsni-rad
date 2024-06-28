@@ -31,6 +31,7 @@ const Header = () => {
                 e.preventDefault(),
                   setRegisterFormState(false),
                   setLoginFormState(true);
+                setOpenMenu(false);
               }}
             >
               LOG IN
@@ -41,8 +42,9 @@ const Header = () => {
             className="nav-button"
             onClick={() => {
               cookies.remove("token", { path: "/", maxAge: "604800" });
-              setUser({ name: "", id: "", email: "" });
-              navigate("/sportnews")
+              setUser({ name: null, id: null, email: null });
+              navigate("/sportnews");
+              setOpenMenu(false);
             }}
           >
             <a href="">LOG OUT</a>
@@ -64,20 +66,28 @@ const Header = () => {
       </div>
     );
   };
+
   return (
     <header>
       {width <= 650 && (
         <div id="mobile-header">
           <div id="sub-header1">
             <li
-              className={`nav-button ${window.location?.pathname == '/' ? "active" : ""}`}
+              className={`nav-button ${window.location?.pathname == "/" ? "active" : ""
+                }`}
               onClick={() => {
                 !user.name && setLoginFormState(true);
               }}
             >
-              <Link id="home-link" to="/" onClick={(e) => !user.id && e.preventDefault()}>
-                <FaHome />
-              </Link>
+              {user.name && (
+                <Link
+                  id="home-link"
+                  to="/"
+                  onClick={(e) => !user.id && e.preventDefault()}
+                >
+                  <FaHome />
+                </Link>
+              )}
             </li>
             <button id="header-bars" onClick={() => setOpenMenu(true)}>
               <FaBars />
@@ -88,15 +98,22 @@ const Header = () => {
 
       <nav style={{ left: openMenu ? "0px" : "100vw" }}>
         {width >= 650 && (
-          <li
-            className={`nav-button ${window.location?.pathname == '/' ? "active" : ""}`}
+          user.name && <li
+            className={`nav-button ${window.location?.pathname == "/" ? "active" : ""
+              }`}
             onClick={() => {
               !user.name && setLoginFormState(true);
             }}
           >
-            <Link id="home-link" to="/" onClick={(e) => !user.id && e.preventDefault()}>
+
+            <Link
+              id="home-link"
+              to="/"
+              onClick={(e) => !user.id && e.preventDefault()}
+            >
               HOME
             </Link>
+
           </li>
         )}
         {width <= 650 && (
@@ -139,9 +156,19 @@ const Header = () => {
         {
           <li
             onClick={() => setOpenMenu(false)}
-            className={`nav-button ${window.location?.pathname == "/sportnews" ? "active" : ""}`}
+            className={`nav-button ${window.location?.pathname == "/sportnews" ? "active" : ""
+              }`}
           >
             <Link to="sportnews">NEWS</Link>
+          </li>
+        }
+        {user.name &&
+          <li
+            onClick={() => setOpenMenu(false)}
+            className={`nav-button ${window.location?.pathname == "/settings" ? "active" : ""
+              }`}
+          >
+            <Link to="settings">PROFILE</Link>
           </li>
         }
         {displayElements()}

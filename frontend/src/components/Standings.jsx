@@ -10,7 +10,7 @@ import { fetchStandings } from "../functions/apiFunctions";
 const Standings = () => {
   const { seasonsOfLeague } = useContextComp();
   const [clubsStandings, setClubsStandings] = useState([]);
-  const [season, setSeason] = useState("");
+  const [latestSeason, setLatestSeason] = useState("");
   const [seasonList, setSeasonList] = useState([]);
   const [standingsHeader, setStandingsHeader] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ const Standings = () => {
     setLoading(true);
     try {
       const standingsData =
-        season && id && (await fetchStandings(sport, id, season));
+        latestSeason && id && (await fetchStandings(sport, id, latestSeason));
       console.log(standingsData);
       if (standingsData.response?.length > 0) {
         console.log(standingsData);
@@ -65,13 +65,13 @@ const Standings = () => {
         seasonsArray.sort((a, b) => b - a);
       }
       setSeasonList(seasonsArray);
-      setSeason(seasonsArray[0]);
+      setLatestSeason(seasonsArray[0]);
     }
-  }, [id]);
+  }, [id, seasonsOfLeague]);
 
   useEffect(() => {
     fetchFunction();
-  }, [id, season]);
+  }, [latestSeason]);
 
   if (!clubsStandings.length)
     return (
@@ -85,8 +85,8 @@ const Standings = () => {
           {" "}
           <select
             id="date"
-            onChange={(e) => setSeason(e.target.value)}
-            value={season.toString()}
+            onChange={(e) => setLatestSeason(e.target.value)}
+            value={latestSeason.toString()}
           >
             {seasonList.map((season) => (
               <option key={season} value={season}>
@@ -108,62 +108,60 @@ const Standings = () => {
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/${pathsInObj[sport].image}")`,
       }}
     >
+      <div id="standings-header-holder">
+        <select
+          id="date"
+          onChange={(e) => setLatestSeason(e.target.value)}
+          defaultValue={latestSeason.toString()}
+        >
+          {seasonList.map((seasonElement) => (
+            <option key={seasonElement} value={seasonElement}>
+              {seasonElement}
+            </option>
+          ))}
+        </select>
+        <h3 id="standings-header">{standingsHeader}</h3>
+      </div>{" "}
       {loading ? (
         <div className="loading-background">
           <div className="loader"></div>
         </div>
       ) : (
-        <>
-          <div id="standings-header-holder">
-            <select
-              id="date"
-              onChange={(e) => setSeason(e.target.value)}
-              defaultValue={season.toString()}
-            >
-              {seasonList.map((seasonElement) => (
-                <option key={seasonElement} value={seasonElement}>
-                  {seasonElement}
-                </option>
-              ))}
-            </select>
-            <h3 id="standings-header">{standingsHeader}</h3>
-          </div>
-          <div id="table-holder">
-            {clubsStandings.length > 0 && (
-              <div id="table">
-                <div>
-                  <h6>#</h6>
-                  <h6>Team</h6>
-                  <h6></h6>
-                  <div className="form">
-                    {Object.keys(clubsStandings[0].stats).map((element) => {
-                      return (
-                        <h6 key={element}>{joinFirstAndCapital(element)}</h6>
-                      );
-                    })}
-                  </div>
-                </div>
-                {clubsStandings.length > 0 &&
-                  clubsStandings.map((element, index) => {
+        <div id="table-holder">
+          {clubsStandings.length > 0 && (
+            <div id="table">
+              <div>
+                <h6>#</h6>
+                <h6>Team</h6>
+                <h6></h6>
+                <div className="form">
+                  {Object.keys(clubsStandings[0].stats).map((element) => {
                     return (
-                      <div key={index}>
-                        <div id="rank">
-                          <p>{element.rank}.</p>
-                        </div>
-                        <img src={element.logo} />
-                        <div>{maximizeNum(element.teamName, 17)}</div>
-                        <div className="form">
-                          {Object.values(element.stats).map((element, i) => {
-                            return <p key={i}>{element}</p>;
-                          })}
-                        </div>
-                      </div>
+                      <h6 key={element}>{joinFirstAndCapital(element)}</h6>
                     );
                   })}
+                </div>
               </div>
-            )}
-          </div>
-        </>
+              {clubsStandings.length > 0 &&
+                clubsStandings.map((element, index) => {
+                  return (
+                    <div key={index}>
+                      <div id="rank">
+                        <p>{element.rank}.</p>
+                      </div>
+                      <img src={element.logo} />
+                      <div>{maximizeNum(element.teamName, 17)}</div>
+                      <div className="form">
+                        {Object.values(element.stats).map((element, i) => {
+                          return <p key={i}>{element}</p>;
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

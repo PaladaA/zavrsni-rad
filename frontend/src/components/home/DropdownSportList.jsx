@@ -8,7 +8,7 @@ const DropdownSportList = ({ sportName }) => {
 
   return (
     <div>
-      <button id="settings-button" onClick={() => setToggle((prev) => !prev)}>
+      <button className="favorite-button-holder" onClick={() => setToggle((prev) => !prev)}>
         <p>{sportName.toUpperCase()}</p>{" "}
         <div className={`svg ${toggle ? "active" : ""}`}>
           <IoIosArrowDown />

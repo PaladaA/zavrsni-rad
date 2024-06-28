@@ -18,10 +18,8 @@ const LogIn = () => {
     registerFormState,
     setLoginFormState,
     loginFormState,
-    loginFun,
+    getTokenForLoginFun,
     serverMessage,
-    user,
-    setUser,
   } = useContextComp();
 
 
@@ -79,7 +77,7 @@ const LogIn = () => {
       }
     });
 
-    !tempErrorMessage && loginFun(inputData, '/login');
+    !tempErrorMessage && getTokenForLoginFun(inputData, '/login');
   };
   console.log(serverMessage);
   {

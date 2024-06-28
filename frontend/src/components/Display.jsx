@@ -17,7 +17,6 @@ const Display = () => {
   }, [sport, id]);
 
   useEffect(() => {
-    console.log("sport");
     setDataLoaded(true);
   }, [sport]);
 
@@ -32,7 +31,7 @@ const Display = () => {
       {width <= 650 && <MobileHeader />}
           <div id="display">
             <LeftBar />
-            {seasonsOfLeague.length > 0 && <Outlet />}
+            <Outlet />
         </div>
       </div>
     </div>

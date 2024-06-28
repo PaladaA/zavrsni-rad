@@ -31,9 +31,10 @@ const FavoriteLeagues = ({ sportName }) => {
       <h3>Pinned leagues</h3>
       {Object.values(favLeagues).length > 0 &&
         Object.values(favLeagues).map((element, i) => {
-        
+          //posto je leaguesList objekt pretvaramo ga u array, keyevi nam nisu potrebni nego value-i tog objekta i svaki value postaje ellement arraya npr ako je bilo 1000 valuea i keyeva u prvotnom objektu sad u arrayu imamo 1000 value-a tj 1000 elemenata arraya. svaki value je array koji sadrzi sve lige po drzavi. dakle imamo array sa arrayevima
+          //number je state koji ima initial value 10 i omogucava prikaz 10 prvih drzava
           return (
-            <LeaguesByCountries
+            <LeaguesByCountries //svaka LeaguesFromBar komponenta je jedna drzava sa svojim ligama
               key={element[0].country}
               element={element}
               sportName={sportName}
@@ -41,7 +42,9 @@ const FavoriteLeagues = ({ sportName }) => {
           );
         })}
 
-
+      {/* {favInstance.length > 0 && favInstance.map((league) =>
+       <DisplayFavLeague key={league.leagueId} favInstance={favInstance} sportName={sportName} leagueId={league.leagueId} />)
+      } */}
     </div>
   );
 };

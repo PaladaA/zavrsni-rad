@@ -15,7 +15,7 @@ export const getFavoriteLeagues = async (user, sport) => {
     });
 };
 
-export const getUsersFavMatches = async(user, sport) => {
+export const getUsersFavMatches = async (user, sport) => {
   return fetch("http://localhost:3000/favorite-matches/retrieve", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -34,7 +34,6 @@ export const getUsersFavMatches = async(user, sport) => {
       console.error(err);
     });
 };
-
 
 export const fetchAllLeagues = async (sport, id = "") => {
   return fetch(
@@ -72,6 +71,7 @@ export const fetchMatches = async (sport, path2) => {
       return data;
     })
     .catch((err) => {
+      //ukoliko je url valjan i dogodi se greska tjekom dohvacanja podatka ispisuje se greska u konzoli
       console.error(err);
     });
 };
@@ -124,35 +124,220 @@ export const updateFavMatchInDb = async (path, sportName, user, match) => {
     })
     .catch((err) => {
       console.error(err);
-    });};
+    });
+};
 
-    export const updateFavLeagueInDb = async (leagueName, leagueId, path, sport, user) => {
-      fetch(`http://localhost:3000/favorite-leagues/${path}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.id,
-          leagueId: leagueId,
-          leagueName: leagueName,
-          sport: sport,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    };
+export const updateFavLeagueInDb = async (
+  leagueName,
+  leagueId,
+  path,
+  sport,
+  user
+) => {
+  fetch(`http://localhost:3000/favorite-leagues/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: user.id,
+      leagueId: leagueId,
+      leagueName: leagueName,
+      sport: sport,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
 
 export const fetchSportNews = async (input) => {
   return fetch(
-    `https://newsapi.org/v2/top-headlines?country=us&category=sports&apiKey=${import.meta.env.VITE_REACT_APP_API_KEY_SPORT_NEWS}`
+    `https://newsapi.org/v2/top-headlines?country=us&category=sports&apiKey=${import.meta.env.VITE_REACT_APP_API_KEY_SPORT_NEWS
+    }`
   )
     .then((response) => response.json())
     .then((data) => {
       return data.articles;
+    })
+    .catch((error) => console.error(error));
+};
+
+export const fetchDeleteAccount = (email, id) => {
+  return fetch(`http://localhost:3000/settings/delete`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify({ email: email, id: id }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => console.error(error));
+};
+
+export const fetchAddLeagueInHistory = (
+  userId,
+  leagueId,
+  leagueName,
+  sport
+) => {
+  return fetch(`http://localhost:3000/settings/addLeagueInHistory`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify({
+      userId: userId,
+      leagueId: leagueId,
+      sport: sport,
+      leagueName: leagueName,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => console.error(error));
+};
+
+export const fetchGetSearchHistory = async (userId, sport) => {
+  return fetch(`http://localhost:3000/settings/getLeagueFromHistory`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify({
+      userId: userId,
+      sport: sport,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+};
+
+export const fetchRemoveFromSearchHistory = (userId, sport, leagueName) => {
+  return fetch(`http://localhost:3000/settings/removeFromSearchHistory`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify({
+      userId: userId,
+      sport: sport,
+      leagueName: leagueName,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      return data;
+    })
+    .catch((error) => console.error(error));
+};
+
+export const fetchChangeUserName = async (name, userId) => {
+  return fetch(`http://localhost:3000/settings/changeName`, {
+    //minjamo u bazi ime
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify({ name: name, id: userId }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => console.error(err));
+};
+
+export const fetchChangePassword = async (password, userId) => {
+  return fetch(`http://localhost:3000/settings/changePassword`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify({ userId: userId, password: password }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => console.error(err));
+};
+
+export const fetchGetTokenForLogIn = async (userInfo, path) => {
+  console.log(userInfo)
+  return fetch(`http://localhost:3000${path}`, {
+    // credentials: "omit", // for 3rd party cookie use 'include' u can also try 'same-origin'
+    method: "POST",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify(userInfo),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("etoga", data);
+      return data;
+    })
+    .catch((err) => console.error(err));
+};
+
+export const fetchLogInUserWithToken = async (token) => {
+  return fetch("http://localhost:3000/login", {
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => console.error(error));
+};
+
+export const fetchRegisterUser = async (userInfo) => {
+  return fetch(`http://localhost:3000/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify(userInfo),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      return data;
+    })
+    .catch((err) => console.error(err));
+};
+
+export const fetchAddStringToSearchHistory = (
+  userId,
+  searchTerm
+) => {
+  return fetch(`http://localhost:3000/settings/addStringToSearchHistory`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }, //important!
+    body: JSON.stringify({
+      userId: userId,
+      searchTerm: searchTerm,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => console.error(error));
+};
+
+export const fetchGetStringSearchHistory = (
+  userId
+) => {
+  console.log("fetchGetStringSearchHistory", userId)
+  return fetch(`http://localhost:3000/settings/getSearchHistory?userId=${userId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      return data
     })
     .catch((error) => console.error(error));
 };

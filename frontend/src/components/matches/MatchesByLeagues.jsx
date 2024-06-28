@@ -3,7 +3,10 @@ import Match from "./Match";
 import { IoIosArrowDown } from "react-icons/io";
 
 const MatchesByLeagues = ({ matches, sportName, matchesFilter, index }) => {
-  const [toggle, setToggle] = useState(index < 2 ? true : false);
+  const [toggle, setToggle] = useState(index < 1 ? true : false);
+  //ako je livescroe onda koristimo display css, dok kad je u home-u micemo element is tree-a
+  // ako je home window.location?.pathname != "/"  onda je false, ako nije onda je true
+  //korišteno zbog updatea favorita...
 
   const myFilter = (matchArray) => {
     return matchArray.filter((match) => {
@@ -13,7 +16,7 @@ const MatchesByLeagues = ({ matches, sportName, matchesFilter, index }) => {
 
   return (
     <div className="leagues-holder-in-ls">
-      {myFilter(matches).length > 0 &&<button id="settings-button" onClick={() => setToggle((prev) => !prev)}>
+      {myFilter(matches).length > 0 &&<button className="dropdown-button" onClick={() => setToggle((prev) => !prev)}>
        <p>{matches[0].league}</p>
         <div className={`svg ${toggle ? "active" : ""}`}>
           <IoIosArrowDown />

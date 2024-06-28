@@ -31,8 +31,7 @@ header #header-bars {
 }
 
 header nav {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, max-content)) 1fr;
+  display: flex;
   gap: 0px 5px;
   width: 100%;
   align-items: center;
@@ -46,6 +45,7 @@ header #auth-buttons {
   justify-content: flex-end;
   align-items: baseline;
   flex-direction: row;
+  margin: 0 0 0 auto;
 }
 
 li {
@@ -205,8 +205,8 @@ header nav li:nth-child(2) {
   min-height: 35px;
   position: sticky;
   top: 0px;
-  background: #d8a404;
   z-index: 1;
+  background: #d8a404;
   border: solid 1px black;
 }
 
@@ -415,7 +415,7 @@ header nav li:nth-child(2) {
 }
 
 .leagues-holder-in-ls {
-  margin-bottom: 25px;
+  margin: 25px 0;
 }
 
 .favorite-button {
@@ -490,7 +490,7 @@ header nav li:nth-child(2) {
   animation: blinking 1s infinite;
 }
 
-#live-score #filters-holder{
+#live-score #filters-holder {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -501,7 +501,7 @@ header nav li:nth-child(2) {
   margin: 10px;
 }
 
-#date + input{
+#date + input {
   margin: 10px;
 }
 
@@ -676,26 +676,12 @@ header nav li:nth-child(2) {
   font-size: 14px;
 }
 
-#home {
+#home,
+#settings {
+  min-height: 100vh;
   padding: 30px;
   border-top: solid 1px #d8a404;
-  background: linear-gradient(
-    180deg,
-    rgba(49, 47, 136, 1) 50%,
-    rgba(216, 164, 4, 1) 100%
-  );
-}
-
-#home-header {
-  position: relative;
-  padding: 30px 0;
-  border-bottom: solid 1px #312f88;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 40px;
-  max-width: 800px;
-  margin: 0 auto;
+  background: linear-gradient(180deg, #181744 50%, #312f8c 100%);
 }
 
 .favorites-from-sports {
@@ -712,111 +698,116 @@ header nav li:nth-child(2) {
   margin: 20px 0;
 }
 
-#home > h3 {
+#home h3,
+#settings h3 {
   color: white;
-  font-size: 30px;
+  font-size: 25px;
 }
-#home h3 {
-  margin: 0;
+
+#settings h4 {
+  color: white;
+  font-size: 22px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+  margin-left: 5px;
 }
 
 #settings {
-  position: relative;
+  min-height: calc(100vh - 65px);
 }
 
-#settings-button {
-  position: relative;
+#settings-holder {
+  padding: 30px;
   display: flex;
-  align-items: flex-end;
-  width: 100%;
-  padding: 20px 15px;
+  flex-direction: row;
   justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  margin: 0 auto;
+  gap: 50px;
 }
 
-.favorites-from-sports > div > #settings-button,
-#settings > #settings-button {
-  background: rgb(0 0 0 / 34%);
+#user-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 300px;
 }
 
-.favorites-from-sports > div > #settings-button p {
-  color: white;
+#admins-settings {
+  width: 300px;
 }
 
-#live-score #settings-button {
-  background: #d8a404e8;
-}
-
-#settings-button p {
-  margin: 0;
-  font-size: 15px;
-  color: white;
-}
-
-.leagues-holder-in-ls #settings-button p {
+#user-settings section > button,
+#admins-settings > button {
+  width: 100%;
+  position: relative;
+  padding: 20px 20px;
+  display: flex;
+  margin-top: 40px;
+  font-size: 16px;
   font-weight: bold;
-  color: black;
 }
 
-#settings-button .svg {
+#user-settings section form {
+  padding: 20px 8px;
+  background: #000000c4;
+  color: white;
+}
+
+button .svg {
   position: absolute;
-  right: 12px;
+  right: 6px;
   top: 12px;
   font-size: 25px;
 }
 
-#settings-button .svg.active {
-  top: -2px;
+button .svg.active {
+  top: 4px;
   transform: rotate(180deg);
 }
 
-.settings-panel {
-  position: relative;
-  z-index: 2;
-  visibility: hidden;
-  height: 0px;
-  overflow: hidden;
-}
-
-.settings-panel.active {
-  visibility: visible;
-  height: inherit;
-}
-
-.settings-panel > button {
-  width: 100%;
-  height: 40px;
-  background: rgb(0 0 0 / 34%);
-  border: solid 1px black;
-  color: white;
-}
-
-.setting {
-  width: 100%;
-  height: 0px;
-  opacity: 0;
-}
-
-.setting.active {
-  visibility: visible;
-  height: 30px;
-  opacity: 1;
-}
-
-.settings-panel form {
+#change-password form div,
+#change-name form div {
   display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.settings-panel form input {
-  width: 70%;
+#change-password form button,
+#change-name form button {
+  margin: 20px 0;
 }
 
-.settings-panel form input + button {
-  width: 30%;
+#change-name form {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
-.settings-panel div button {
+.dropdown-button {
+  position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
-  height: 100%;
+  justify-content: space-between;
+}
+
+.favorites-from-sports > div > .favorite-button-holder {
+  position: relative;
+  background: rgb(0 0 0 / 34%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px 40px 20px 15px;
+  margin-top: 40px;
+}
+
+.favorites-from-sports > div > .favorite-button-holder p {
+  margin: 0;
+  font-size: 15px;
+  color: white;
 }
 
 #admins-form {
@@ -824,6 +815,8 @@ header nav li:nth-child(2) {
   background: #d8a404;
   border-left: solid 1px;
   border-right: solid 1px;
+  max-height: 300px;
+  overflow: auto;
 }
 
 #admins-form input {
@@ -837,7 +830,6 @@ header nav li:nth-child(2) {
   align-items: center;
   justify-content: space-between;
   border-bottom: solid 1px black;
-  margin-top: 15px;
   padding: 2px 5px;
 }
 
@@ -848,14 +840,6 @@ header nav li:nth-child(2) {
   background: inherit;
   border: 0;
   font-size: 22px;
-}
-
-#home #settings-button p {
-  margin: 0;
-}
-
-#home .favorites-from-sports #settings-button {
-  margin: 30px 0px 0px;
 }
 
 .favorite-matches,
@@ -901,12 +885,59 @@ header nav li:nth-child(2) {
   width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(farthest-side, #ffa516 94%, #0000) top/8px 8px
-      no-repeat,
+  background:
+    radial-gradient(farthest-side, #ffa516 94%, #0000) top/8px 8px no-repeat,
     conic-gradient(#0000 30%, #ffa516);
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
   animation: l13 1s infinite linear;
 }
+
+#search-history {
+  background: #d8a404;
+  border: solid 1px black;
+  border-radius: 10px;
+  padding: 7px;
+  max-height: 400px;
+  width: 100%;
+}
+
+#leftBar .leagues-search-history {
+  width: 180px;
+  position: absolute;
+  top: 67%;
+  right: -82%;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+.leagues-search-history {
+  background: white;
+  overflow-y: scroll;
+  max-height: 300px;
+}
+
+.leagues-search-history p {
+  font-weight: bold;
+  margin: 10px 0;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.leagues-search-history div p + button {
+  font-size: 20px;
+  background: none;
+  border: 0;
+  margin: 7px;
+}
+
+.leagues-search-history div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: solid 1px;
+}
+
 @keyframes l13 {
   100% {
     transform: rotate(1turn);
@@ -1092,6 +1123,16 @@ header nav li:nth-child(2) {
     right: unset;
     left: unset;
   }
+
+  #leftBar .leagues-search-history {
+    width: fit-content;
+    position: absolute;
+    bottom: 30%;
+    top: unset;
+    right: 2%;
+    z-index: 2;
+    max-height: 130px;
+  }
 }
 
 @media only screen and (max-width: 350px) {
@@ -1144,4 +1185,12 @@ header nav li:nth-child(2) {
   .one-match > .away-team {
     padding: 15px 20px 15px 10px;
   }
+}
+
+#leagueNameEl {
+  min-width: 350px;
+}
+
+#sportEl {
+  min-width: 150px;
 }

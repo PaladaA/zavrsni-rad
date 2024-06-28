@@ -9,6 +9,7 @@ import LeaguesByCountries from "./LeaguesByCountries";
 import { useContextComp } from "../MyContext";
 import { leaguesDataMapper } from "../../dataStructuringFunctions/leaguesDataMapper";
 import { useWindowSize } from "../useWindowSize";
+import SearchHistoryLeagues from "../settings/SearchHistoryLeagues";
 
 const LeftBar = () => {
   const [leaguesList, setLeaguesList] = useState({});
@@ -18,12 +19,12 @@ const LeftBar = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useContextComp();
   const { sport } = useParams();
-  const { mobileLeftBarDisplay } = useContextComp();
+  const { mobileLeftBarDisplay, setSeasonsOfLeague } = useContextComp();
   const [width, height] = useWindowSize();
 
   useEffect(() => {
     setNameSearch("");
-    typeof user === "object" && fetchData();
+    fetchData();
   }, [sport, user.id]);
 
   const fetchData = async () => {
@@ -35,9 +36,19 @@ const LeftBar = () => {
 
       const leaguesDataFromApi = await fetchAllLeagues(sport);
 
+      window.location?.pathname.split("/")[2] == "league" &&
+        leaguesDataFromApi.forEach((element) => {
+          if (
+            (element.league?.id ?? element.id) ==
+            window.location?.pathname.split("/")[3]
+          ) {
+            setSeasonsOfLeague(element.seasons);
+          }
+        });
+
       setLeaguesList(leaguesDataMapper(leaguesDataFromApi, favLeagues, sport));
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -62,32 +73,16 @@ const LeftBar = () => {
         });
         x.length > 0 && newArr.push(x);
       });
-      return newArr; 
+      return newArr; //vracamo array sa ligama/drzavama (ovisno o select elementu) koje sadrze slova upisana
     }
   };
-
-  const updateAfterPin = (id, country, val) =>{//update array-a kako bi sacuvao promjene koje smo napravili
-    setLeaguesList(prevList => {
-      const updatedList = { ...prevList };
-  
-      // Find the league with the provided id and country
-      Object.keys(updatedList).forEach(continent => {
-        updatedList[continent].forEach(league => {
-          if (league.country === country && league.id === id) {
-            // Update the favoriteLeagues property
-            league.favoriteLeagues = val;
-          }
-        });
-      });
-  
-      return updatedList;
-    });
-    }
 
   return (
     <div
       id="leftBar"
-      style={{ display: !mobileLeftBarDisplay && width <= 650 ? "none" : "flex" }}
+      style={{
+        display: !mobileLeftBarDisplay && width <= 650 ? "none" : "flex",
+      }}
     >
       {loading ? (
         <div className="loading-background">
@@ -112,21 +107,23 @@ const LeftBar = () => {
               value={nameSearch}
               onChange={(e) => setNameSearch(e.target.value)}
               placeholder={`type ${searchBy} name`}
-            />
+              autoComplete="off"
+            />{" "}
           </form>
           <div>
             {Object.values(leaguesList).length > 0 &&
               myFilter(Object.values(leaguesList)).map((element, i) => {
-                
+                //posto je leaguesList objekt pretvaramo ga u array, keyevi nam nisu potrebni nego value-i tog objekta i svaki value postaje ellement arraya npr ako je bilo 1000 valuea i keyeva u prvotnom objektu sad u arrayu imamo 1000 value-a tj 1000 elemenata arraya. svaki value je array koji sadrzi sve lige po drzavi. dakle imamo array sa arrayevima
                 if (i < number)
+                  //number je state koji ima initial value 10 i omogucava prikaz 10 prvih drzava
                   return (
-                    <LeaguesByCountries 
+                    <LeaguesByCountries //svaka LeaguesFromBar komponenta je jedna drzava sa svojim ligama
                       key={element[0].country}
                       element={element}
                     />
                   );
               })}
-            {myFilter(Object.values(leaguesList)).length > number && ( 
+            {myFilter(Object.values(leaguesList)).length > number && ( //ako je broj prikazanih drzava (number) manji od max broja botun je vidljiv i mozemo klikom na botun dolje povecat broj drzava za 15
               <button
                 className="expand-league-button"
                 onClick={() => setNumber((prev) => prev + 15)}

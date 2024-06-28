@@ -48,10 +48,10 @@ const matchDataMapper2 = (data, sport, favMatch ) => {
 
     matchDataMapper2(data, userData, sport).forEach((element) => {
       if (result.hasOwnProperty(element.league)) {
-        
+        //u objekt result ako postoji key drzave npr croatia pushamo u key croatia objekt koji sadrzi ligu i ostale podatke koji su raspoređeni u gornjoj funkciji
         result[element.league].push(element);
       } else {
-       
+        //u objektu result ako ne postoji key imena npr croatia kreiramo key croatia sa valueom koji je array i u njega upisujemo prvu ligu koja je objekt (element je objekt ali posto je unutar [] postavili smo objekt unutar arraya)
         result[element.league] = [element];
       }
     });
